@@ -80,10 +80,6 @@ function setInitialPosition() {
     }
 }
 
-// function toMapKey(head) {
-//     return '0-' + (+head.split('-')[1] + 1);
-// }
-
 function updateSnakePosition() {
     let tail = currentPosition.shift();
     let head = currentPosition[currentPosition.length - 1];
