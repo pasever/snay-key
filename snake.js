@@ -13,27 +13,25 @@ canvas.style.marginLeft  = 'auto';
 canvas.style.marginRight  = 'auto';
 
 const START = document.getElementById('start');
-START.style.marginLeft = 'auto';
-START.style.marginRight = 'auto';
-START.style.display = 'block';
 START.style.marginTop = '10px'
 
 const PAUSE = document.getElementById('pause');
-PAUSE.style.marginLeft = 'auto';
-PAUSE.style.marginRight = 'auto';
-PAUSE.style.display = 'block';
 PAUSE.style.marginTop = '10px'
+
+const COUNTER_REF = document.getElementById('counter');
+let counter = 0;
 
 // each square will have format '0-24'
 
 let PIXELS = new Map();
 let CURRENT_DIRECTION = 'r';
+let CURRENT_SEED;
 let INITIAL_POSITION = [
-    '0-0',
-    '0-1',
-    '0-2',
-    '0-3',
-    '0-4'
+    '2-2',
+    '2-3',
+    '2-4',
+    '2-5',
+    '2-6'
 ];
 
 let currentPosition = [];
@@ -44,22 +42,39 @@ function initSnake() {
     startInterval();
     initKeyListeners();
     START.style.display = 'none';
+    setTimeout(() => seedBlock(), 500);
+}
+
+function seedBlock() {
+    const x = Math.floor(Math.random() * ROWS);
+    const y = Math.floor(Math.random() * COLUMNS);
+    CURRENT_SEED = x + '-' + y;
+    PIXELS.get(CURRENT_SEED).style.background = 'black';
+    // return x + '-' + y;
 }
 
 function initKeyListeners() {
     document.addEventListener('keypress', event => {
         switch (event.key) {
             case 'e':
-                CURRENT_DIRECTION = 'u';
+                if (CURRENT_DIRECTION !== 'd') {
+                    CURRENT_DIRECTION = 'u';
+                }
                 break;
             case 'f':
-                CURRENT_DIRECTION = 'r';
+                if (CURRENT_DIRECTION !== 'l') {
+                    CURRENT_DIRECTION = 'r';
+                }
                 break;
             case 's':
-                CURRENT_DIRECTION = 'l';
+                if (CURRENT_DIRECTION !== 'r') {
+                    CURRENT_DIRECTION = 'l';
+                }
                 break;
             case 'd':
-                CURRENT_DIRECTION = 'd';
+                if (CURRENT_DIRECTION !== 'u') {
+                    CURRENT_DIRECTION = 'd';
+                }
                 break;
             default:
                 break;
@@ -68,9 +83,7 @@ function initKeyListeners() {
 }
 
 function startInterval() {
-    interval =  setInterval(() => {
-        updateSnakePosition();
-    }, 100);
+    interval =  setInterval(() => updateSnakePosition(), 100);
 }
 
 function setInitialPosition() {
@@ -83,33 +96,51 @@ function setInitialPosition() {
 function updateSnakePosition() {
     let tail = currentPosition.shift();
     let head = currentPosition[currentPosition.length - 1];
+
+    if (head === CURRENT_SEED) {
+        currentPosition.push(tail);
+        COUNTER_REF.innerText = 'Count: ' + ++counter;
+
+        seedBlock();
+    }
     let newHead;
     const map = head.split('-');
+    if (legalPosition(map)) {
+        switch (CURRENT_DIRECTION) {
+            case 'r':
+                newHead = map[0] + '-' + (+map[1] + 1);
+                break;
+            case 'd':
+                newHead = (+map[0] + 1) + '-' + (+map[1]);
+                break;
+            case 'l':
+                newHead = map[0] + '-' + (+map[1] - 1);
+                break;
+            case 'u':
+                newHead = (+map[0] - 1) + '-' + (+map[1]);
+                break;
+            default:
+                break;
+        }
 
-    switch (CURRENT_DIRECTION) {
-        case 'r':
-           newHead = map[0] + '-' + (+map[1] + 1);
-           break;
-        case 'd':
-           newHead = (+map[0] + 1) + '-' + (+map[1]);
-           break;
-        case 'l':
-            newHead = map[0] + '-' + (+map[1] - 1);
-            break;
-        case 'u':
-            newHead = (+map[0] - 1) + '-' + (+map[1]);
-            break;
-        default:
-            break;
+        PIXELS.get(newHead).style.background = 'black';
+        PIXELS.get(tail).style.background = 'initial';
+        currentPosition.push(newHead);
+    } else {
+        gameOver();
     }
+}
 
-    PIXELS.get(newHead).style.background = 'black';
-    PIXELS.get(tail).style.background = 'initial';
-    currentPosition.push(newHead);
+function legalPosition(map) {
+    return +map[0] + 1 < ROWS && +map[1] + 1 < COLUMNS;
 }
 
 function gameOver() {
-
+    clearInterval(interval);
+    canvas.style.border = '8px solid red';
+    gamePaused = false;
+    START.style.display = 'inline';
+    PAUSE.style.display = 'none';
 }
 
 
