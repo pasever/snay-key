@@ -23,15 +23,15 @@ let counter = 0;
 
 // each square will have format '0-24'
 
-let PIXELS = new Map();
+let SQUARES = new Map();
 let CURRENT_DIRECTION = 'r';
 let CURRENT_SEED;
 let INITIAL_POSITION = [
-    '2-2',
-    '2-3',
-    '2-4',
-    '2-5',
-    '2-6'
+    '1-1',
+    '1-2',
+    '1-3',
+    '1-4',
+    '1-5'
 ];
 
 let currentPosition = [];
@@ -49,29 +49,33 @@ function seedBlock() {
     const x = Math.floor(Math.random() * ROWS);
     const y = Math.floor(Math.random() * COLUMNS);
     CURRENT_SEED = x + '-' + y;
-    PIXELS.get(CURRENT_SEED).style.background = 'black';
+    SQUARES.get(CURRENT_SEED).style.background = 'black';
     // return x + '-' + y;
 }
 
 function initKeyListeners() {
-    document.addEventListener('keypress', event => {
+    document.addEventListener('keydown', event => {
         switch (event.key) {
             case 'e':
+            case 'ArrowUp':
                 if (CURRENT_DIRECTION !== 'd') {
                     CURRENT_DIRECTION = 'u';
                 }
                 break;
             case 'f':
+            case 'ArrowRight':
                 if (CURRENT_DIRECTION !== 'l') {
                     CURRENT_DIRECTION = 'r';
                 }
                 break;
             case 's':
+            case 'ArrowLeft':
                 if (CURRENT_DIRECTION !== 'r') {
                     CURRENT_DIRECTION = 'l';
                 }
                 break;
             case 'd':
+            case 'ArrowDown':
                 if (CURRENT_DIRECTION !== 'u') {
                     CURRENT_DIRECTION = 'd';
                 }
@@ -88,7 +92,7 @@ function startInterval() {
 
 function setInitialPosition() {
     for (let i = 0; i < INITIAL_POSITION.length; i++) {
-        PIXELS.get(INITIAL_POSITION[i]).style.background = 'black';
+        SQUARES.get(INITIAL_POSITION[i]).style.background = 'black';
         currentPosition.push(INITIAL_POSITION[i]);
     }
 }
@@ -123,8 +127,8 @@ function updateSnakePosition() {
                 break;
         }
 
-        PIXELS.get(newHead).style.background = 'black';
-        PIXELS.get(tail).style.background = 'initial';
+        SQUARES.get(newHead).style.background = 'black';
+        SQUARES.get(tail).style.background = 'initial';
         currentPosition.push(newHead);
     } else {
         gameOver();
@@ -147,17 +151,15 @@ function gameOver() {
 function drawCanvas() {
     for (let i = 0; i < ROWS; i++) {
         for (let j = 0; j < COLUMNS; j++) {
-            const pixel = document.createElement('div');
-            pixel.style.position = 'absolute';
-            pixel.style.padding  = '5px'
-            pixel.style.border   = '1px solid gray';
-            pixel.style.left     = `${j * 10}px`;
-            pixel.style.top   = `${i * 10}px`;
-            // pixel.style.width = '10px'
-            // pixel.style.height = '10px'
+            const square = document.createElement('div');
+            square.style.position = 'absolute';
+            square.style.padding  = '5px'
+            square.style.border   = '1px solid #A9A9A9';
+            square.style.left     = `${j * 10}px`;
+            square.style.top   = `${i * 10}px`;
             let position = i + '-' + j;
-            PIXELS.set(position, pixel);
-            canvas.appendChild(pixel);
+            SQUARES.set(position, square);
+            canvas.appendChild(square);
         }
     }
 
