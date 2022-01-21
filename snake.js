@@ -1,8 +1,7 @@
 const ROWS = 30;
 const COLUMNS = 50;
 const canvas = document.getElementById('canvas');
-const h1 = document.getElementById('title');
-h1.style.textAlign = 'center';
+const games = document.getElementById('games');
 
 canvas.style.width = '500px';
 canvas.style.height = '300px';
@@ -17,15 +16,18 @@ START.style.marginTop = '10px'
 
 const PAUSE = document.getElementById('pause');
 PAUSE.style.marginTop = '10px'
+PAUSE.style.display   = 'none';
 
 const COUNTER_REF = document.getElementById('counter');
 let counter = 0;
+let gamesCounter   = 0;
+let pristine = true;
 
 // each square will have format '0-24'
 
 let SQUARES = new Map();
 let CURRENT_DIRECTION = 'r';
-let CURRENT_SEED;
+let CURRENT_SEED = null;
 let INITIAL_POSITION = [
     '1-1',
     '1-2',
@@ -39,18 +41,42 @@ let interval;
 let gamePaused = false;
 
 function initSnake() {
+
+    if (CURRENT_SEED) {
+        SQUARES.get(CURRENT_SEED).style.background = 'initial';
+        CURRENT_SEED = undefined;
+    }
+
+    if (!pristine) {
+        currentPosition.forEach(position => SQUARES.get(position).style.background = 'initial');
+        currentPosition = [];
+        setInitialPosition();
+        CURRENT_DIRECTION = 'r';
+        COUNTER_REF.innerText = 'Count: 0';
+        canvas.style.border = '5px solid black';
+        games.innerText = 'Games Played: ' + ++gamesCounter;
+    } else {
+        initKeyListeners();
+    }
+
     startInterval();
-    initKeyListeners();
     START.style.display = 'none';
+    PAUSE.style.display = 'inline';
     setTimeout(() => seedBlock(), 500);
+    counter = 0;
 }
 
 function seedBlock() {
-    const x = Math.floor(Math.random() * ROWS);
-    const y = Math.floor(Math.random() * COLUMNS);
-    CURRENT_SEED = x + '-' + y;
+    while (true) {
+        const x = Math.floor(Math.random() * ROWS);
+        const y = Math.floor(Math.random() * COLUMNS);
+        CURRENT_SEED = x + '-' + y;
+
+        if (currentPosition.indexOf(CURRENT_SEED) < 0) {
+            break;
+        }
+    }
     SQUARES.get(CURRENT_SEED).style.background = 'black';
-    // return x + '-' + y;
 }
 
 function initKeyListeners() {
@@ -98,55 +124,70 @@ function setInitialPosition() {
 }
 
 function updateSnakePosition() {
-    let tail = currentPosition.shift();
+    let tail = currentPosition[0];
     let head = currentPosition[currentPosition.length - 1];
 
     if (head === CURRENT_SEED) {
         currentPosition.push(tail);
         COUNTER_REF.innerText = 'Count: ' + ++counter;
-
         seedBlock();
     }
+
     let newHead;
     const map = head.split('-');
-    if (legalPosition(map)) {
-        switch (CURRENT_DIRECTION) {
-            case 'r':
+    switch (CURRENT_DIRECTION) {
+        case 'r':
+            if ((+map[1] + 1) < COLUMNS) {
                 newHead = map[0] + '-' + (+map[1] + 1);
-                break;
-            case 'd':
+                updateHeadAndPosition(newHead, tail);
+            } else {
+                gameOver();
+            }
+            break;
+        case 'd':
+            if ((+map[0] + 1) < ROWS) {
                 newHead = (+map[0] + 1) + '-' + (+map[1]);
-                break;
-            case 'l':
+                updateHeadAndPosition(newHead, tail);
+            } else {
+                gameOver();
+            }
+            break;
+        case 'l':
+            if (+map[1] - 1 >= 0) {
                 newHead = map[0] + '-' + (+map[1] - 1);
-                break;
-            case 'u':
+                updateHeadAndPosition(newHead, tail);
+            } else {
+                gameOver();
+            }
+            break;
+        case 'u':
+            if (+map[0] - 1 >= 0) {
                 newHead = (+map[0] - 1) + '-' + (+map[1]);
-                break;
-            default:
-                break;
-        }
-
-        SQUARES.get(newHead).style.background = 'black';
-        SQUARES.get(tail).style.background = 'initial';
-        currentPosition.push(newHead);
-    } else {
-        gameOver();
+                updateHeadAndPosition(newHead, tail);
+            } else {
+                gameOver();
+            }
+            break;
+        default:
+            break;
     }
 }
 
-function legalPosition(map) {
-    return +map[0] + 1 < ROWS && +map[1] + 1 < COLUMNS;
+function updateHeadAndPosition(head, tail) {
+    currentPosition.shift();
+    SQUARES.get(head).style.background = 'black';
+    SQUARES.get(tail).style.background = 'initial';
+    currentPosition.push(head);
 }
 
 function gameOver() {
     clearInterval(interval);
     canvas.style.border = '8px solid red';
-    gamePaused = false;
     START.style.display = 'inline';
+    START.innerText = 'Restart';
     PAUSE.style.display = 'none';
+    pristine = false;
 }
-
 
 function drawCanvas() {
     for (let i = 0; i < ROWS; i++) {
