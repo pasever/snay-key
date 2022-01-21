@@ -45,7 +45,7 @@ function initSnake() {
             CURRENT_SEED = undefined;
         }
     } else {
-        initKeyListeners();
+        // initKeyListeners();
         initButtonsListeners();
     }
 
