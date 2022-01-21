@@ -47,6 +47,7 @@ function initSnake() {
     } else {
         // initKeyListeners();
         initButtonsListeners();
+        initSwipeListeners();
     }
 
     startInterval();
@@ -57,12 +58,17 @@ function initSnake() {
 }
 
 function seedBlock() {
+    let attempts = 0;
     while (true) {
         const x = Math.floor(Math.random() * ROWS);
         const y = Math.floor(Math.random() * COLUMNS);
         CURRENT_SEED = x + '-' + y;
+        attempts++;
 
         if (currentPosition.indexOf(CURRENT_SEED) < 0) {
+            break;
+        }
+        if (attempts > 5000) {
             break;
         }
     }
@@ -70,10 +76,14 @@ function seedBlock() {
 }
 
 function initButtonsListeners() {
-    document.getElementById('up').addEventListener('click', _ => up());
-    document.getElementById('left').addEventListener('click', _ => left());
-    document.getElementById('right').addEventListener('click', _ => right());
-    document.getElementById('down').addEventListener('click', _ => down());
+    const upBtn = document.getElementById('up');
+    upBtn.addEventListener('click', _ => up());
+    const leftBtn = document.getElementById('left');
+    leftBtn.addEventListener('click', _ => left());
+    const rightBtn = document.getElementById('right');
+    rightBtn.addEventListener('click', _ => right());
+    const downBtn = document.getElementById('down');
+    downBtn.addEventListener('click', _ => down());
 }
 
 function down() {
@@ -98,6 +108,13 @@ function right() {
     if (CURRENT_DIRECTION !== 'l') {
         CURRENT_DIRECTION = 'r';
     }
+}
+
+function initSwipeListeners() {
+    canvas.addEventListener('swiped-left', _ => left());
+    canvas.addEventListener('swiped-right', _ => right());
+    canvas.addEventListener('swiped-up', _ => up());
+    canvas.addEventListener('swiped-down', _ => down());
 }
 
 function initKeyListeners() {
