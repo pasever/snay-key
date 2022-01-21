@@ -1,23 +1,13 @@
-const ROWS = 30;
+const ROWS = 65;
 const COLUMNS = 50;
 const canvas = document.getElementById('canvas');
 const games = document.getElementById('games');
 
-canvas.style.width = '500px';
-canvas.style.height = '300px';
-canvas.style.border = '5px solid black';
-canvas.style.boxSizing = 'content-box';
-canvas.style.position  = 'relative';
-canvas.style.marginLeft  = 'auto';
-canvas.style.marginRight  = 'auto';
+canvas.style.width = '900px';
+canvas.style.height = '1170px';
 
 const START = document.getElementById('start');
-START.style.marginTop = '10px'
-
 const PAUSE = document.getElementById('pause');
-PAUSE.style.marginTop = '10px'
-PAUSE.style.display   = 'none';
-
 const COUNTER_REF = document.getElementById('counter');
 let counter = 0;
 let gamesCounter   = 0;
@@ -41,12 +31,6 @@ let interval;
 let gamePaused = false;
 
 function initSnake() {
-
-    if (CURRENT_SEED) {
-        SQUARES.get(CURRENT_SEED).style.background = 'initial';
-        CURRENT_SEED = undefined;
-    }
-
     if (!pristine) {
         currentPosition.forEach(position => SQUARES.get(position).style.background = 'initial');
         currentPosition = [];
@@ -55,8 +39,14 @@ function initSnake() {
         COUNTER_REF.innerText = 'Count: 0';
         canvas.style.border = '5px solid black';
         games.innerText = 'Games Played: ' + ++gamesCounter;
+
+        if (CURRENT_SEED) {
+            SQUARES.get(CURRENT_SEED).style.background = 'initial';
+            CURRENT_SEED = undefined;
+        }
     } else {
         initKeyListeners();
+        initButtonsListeners();
     }
 
     startInterval();
@@ -79,32 +69,59 @@ function seedBlock() {
     SQUARES.get(CURRENT_SEED).style.background = 'black';
 }
 
+function initButtonsListeners() {
+    document.getElementById('up').addEventListener('click', _ => up());
+    document.getElementById('left').addEventListener('click', _ => left());
+    document.getElementById('right').addEventListener('click', _ => right());
+    document.getElementById('down').addEventListener('click', _ => down());
+}
+
+function down() {
+    if (CURRENT_DIRECTION !== 'u') {
+        CURRENT_DIRECTION = 'd';
+    }
+}
+
+function left() {
+    if (CURRENT_DIRECTION !== 'r') {
+        CURRENT_DIRECTION = 'l';
+    }
+}
+
+function up() {
+    if (CURRENT_DIRECTION !== 'd') {
+        CURRENT_DIRECTION = 'u';
+    }
+}
+
+function right() {
+    if (CURRENT_DIRECTION !== 'l') {
+        CURRENT_DIRECTION = 'r';
+    }
+}
+
 function initKeyListeners() {
     document.addEventListener('keydown', event => {
         switch (event.key) {
             case 'e':
             case 'ArrowUp':
-                if (CURRENT_DIRECTION !== 'd') {
-                    CURRENT_DIRECTION = 'u';
-                }
+                event.preventDefault();
+                up();
                 break;
             case 'f':
             case 'ArrowRight':
-                if (CURRENT_DIRECTION !== 'l') {
-                    CURRENT_DIRECTION = 'r';
-                }
+                event.preventDefault();
+                right();
                 break;
             case 's':
             case 'ArrowLeft':
-                if (CURRENT_DIRECTION !== 'r') {
-                    CURRENT_DIRECTION = 'l';
-                }
+                event.preventDefault();
+                left();
                 break;
             case 'd':
             case 'ArrowDown':
-                if (CURRENT_DIRECTION !== 'u') {
-                    CURRENT_DIRECTION = 'd';
-                }
+                event.preventDefault();
+                down(event);
                 break;
             default:
                 break;
@@ -194,10 +211,10 @@ function drawCanvas() {
         for (let j = 0; j < COLUMNS; j++) {
             const square = document.createElement('div');
             square.style.position = 'absolute';
-            square.style.padding  = '5px'
+            square.style.padding  = '7px'
             square.style.border   = '1px solid #A9A9A9';
-            square.style.left     = `${j * 10}px`;
-            square.style.top   = `${i * 10}px`;
+            square.style.left     = `${j * 18}px`;
+            square.style.top   = `${i * 18}px`;
             let position = i + '-' + j;
             SQUARES.set(position, square);
             canvas.appendChild(square);

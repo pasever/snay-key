@@ -1,17 +1,42 @@
 <!doctype html>
 <html lang="eng">
-  <body style="text-align: center">
-    <h1> Snay Key </h1>
+  <head>
+    <link rel="stylesheet" href="./snake.css">
+  </head>
+  <body>
+
+    <div class="title">
+      <h1> Snay Key </h1>
+
+      <div class="brains">
+        <span id="counter"> Count: 0 / </span>
+        <span id="speed">   Speed: 0 / </span>
+        <span id="games">   Games Played: 0 </span>
+      </div>
+    </div>
+
     <div id="canvas"></div>
 
-    <div id="buttons" style="text-align: center">
+    <div id="buttons">
       <button id="start"> Start </button>
       <button id="pause"> Pause </button>
     </div>
 
-    <h5 id="counter"> Count: 0        </h5>
-    <h5 id="speed">   Speed: 0        </h5>
-    <h5 id="games">   Games Played: 0 </h5>
+<!--    <div>-->
+<!--      Game Over-->
+<!--    </div>-->
+
+    <div class="filler"></div>
+
+    <div class="controls" id="controls">
+      <button class="control up" id="up"> UP </button>
+      <button class="control left" id="left"> LEFT </button>
+      <button class="control none"> Middle </button>
+      <button class="control right" id="right"> RIGHT </button>
+      <button class="control down" id="down"> DOWN </button>
+    </div>
+
+
     <script src="snake.js"></script>
   </body>
 </html>
