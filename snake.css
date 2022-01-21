@@ -56,9 +56,9 @@ body {
 }
 
 @media (min-width: 600px) {
-    .controls {
-        display: none;
-    }
+    /*.controls {*/
+    /*    display: none;*/
+    /*}*/
 }
 
 #buttons {
