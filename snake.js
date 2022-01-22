@@ -1,10 +1,10 @@
-const ROWS = 65;
-const COLUMNS = 50;
+let ROWS = 30;
+let COLUMNS = 30;
 const canvas = document.getElementById('canvas');
 const games = document.getElementById('games');
 
-canvas.style.width = '900px';
-canvas.style.height = '1170px';
+// canvas.style.width = '540px';
+// canvas.style.height = '540px';
 
 const START = document.getElementById('start');
 const PAUSE = document.getElementById('pause');
@@ -45,8 +45,8 @@ function initSnake() {
             CURRENT_SEED = undefined;
         }
     } else {
-        // initKeyListeners();
-        initButtonsListeners();
+        initKeyListeners();
+        // initButtonsListeners();
         initSwipeListeners();
     }
 
@@ -75,16 +75,16 @@ function seedBlock() {
     SQUARES.get(CURRENT_SEED).style.background = 'black';
 }
 
-function initButtonsListeners() {
-    const upBtn = document.getElementById('up');
-    upBtn.addEventListener('click', _ => up());
-    const leftBtn = document.getElementById('left');
-    leftBtn.addEventListener('click', _ => left());
-    const rightBtn = document.getElementById('right');
-    rightBtn.addEventListener('click', _ => right());
-    const downBtn = document.getElementById('down');
-    downBtn.addEventListener('click', _ => down());
-}
+// function initButtonsListeners() {
+//     const upBtn = document.getElementById('up');
+//     upBtn.addEventListener('click', _ => up());
+//     const leftBtn = document.getElementById('left');
+//     leftBtn.addEventListener('click', _ => left());
+//     const rightBtn = document.getElementById('right');
+//     rightBtn.addEventListener('click', _ => right());
+//     const downBtn = document.getElementById('down');
+//     downBtn.addEventListener('click', _ => down());
+// }
 
 function down() {
     if (CURRENT_DIRECTION !== 'u') {
@@ -111,10 +111,10 @@ function right() {
 }
 
 function initSwipeListeners() {
-    canvas.addEventListener('swiped-left', _ => left());
-    canvas.addEventListener('swiped-right', _ => right());
-    canvas.addEventListener('swiped-up', _ => up());
-    canvas.addEventListener('swiped-down', _ => down());
+    canvas.addEventListener('swiped-left', _ => left(), false);
+    canvas.addEventListener('swiped-right', _ => right(), false);
+    canvas.addEventListener('swiped-up', _ => up(), false);
+    canvas.addEventListener('swiped-down', _ => down(), false);
 }
 
 function initKeyListeners() {
@@ -163,7 +163,7 @@ function updateSnakePosition() {
 
     if (head === CURRENT_SEED) {
         currentPosition.push(tail);
-        COUNTER_REF.innerText = 'Count: ' + ++counter;
+        COUNTER_REF.innerText = 'Count: ' + ++counter + ' /';
         seedBlock();
     }
 
@@ -224,6 +224,21 @@ function gameOver() {
 }
 
 function drawCanvas() {
+    const rowsRest = canvas.clientWidth  % 18;
+    const columnsRest = canvas.clientHeight  % 18
+
+    if (rowsRest !== 0) {
+        COLUMNS = (canvas.clientWidth - rowsRest) / 18;
+    } else {
+        COLUMNS = canvas.clientWidth / 18;
+    }
+
+    if (columnsRest !== 0) {
+        ROWS = (canvas.clientHeight - columnsRest) / 18;
+    } else {
+        ROWS = canvas.clientHeight / 18;
+    }
+
     for (let i = 0; i < ROWS; i++) {
         for (let j = 0; j < COLUMNS; j++) {
             const square = document.createElement('div');

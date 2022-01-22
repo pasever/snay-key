@@ -3,6 +3,7 @@ body {
     width: 100%;
     display: flex;
     flex-flow: column;
+    height: 100%;
 }
 
 .title {
@@ -30,6 +31,8 @@ body {
     position: relative;
     margin-right: auto;
     margin-left: auto;
+    height: 80%;
+    width: 90%;
 }
 
 #start, #pause {
