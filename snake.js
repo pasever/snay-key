@@ -3,9 +3,6 @@ let COLUMNS = 30;
 const canvas = document.getElementById('canvas');
 const games = document.getElementById('games');
 
-// canvas.style.width = '540px';
-// canvas.style.height = '540px';
-
 const START = document.getElementById('start');
 const PAUSE = document.getElementById('pause');
 const COUNTER_REF = document.getElementById('counter');
@@ -225,7 +222,7 @@ function gameOver() {
 
 function drawCanvas() {
     const rowsRest = canvas.clientWidth  % 18;
-    const columnsRest = canvas.clientHeight  % 18
+    const columnsRest = canvas.clientHeight  % 18;
 
     if (rowsRest !== 0) {
         COLUMNS = (canvas.clientWidth - rowsRest) / 18;
@@ -238,6 +235,9 @@ function drawCanvas() {
     } else {
         ROWS = canvas.clientHeight / 18;
     }
+
+    canvas.style.width = COLUMNS * 18 + 'px';
+    canvas.style.height = ROWS * 18 + 'px';
 
     for (let i = 0; i < ROWS; i++) {
         for (let j = 0; j < COLUMNS; j++) {
