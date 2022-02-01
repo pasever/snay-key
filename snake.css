@@ -1,16 +1,18 @@
 html,
 body {
-    width: 100%;
+    /*width: 100%;*/
     display: flex;
     flex-flow: column;
     height: 100%;
+    margin: 0;
+    padding: 0 50px;
 }
 
 .title {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 50px;
+    /*margin: 0 50px;*/
 }
 
 .control {
@@ -31,7 +33,7 @@ body {
     position: relative;
     margin-right: auto;
     margin-left: auto;
-    height: 80%;
+    height: 85%;
     width: 90%;
 }
 
