@@ -1,7 +1,12 @@
-let ROWS = 30;
-let COLUMNS = 30;
+let ROWS = 20;
+let COLUMNS = 20;
 const canvas = document.getElementById('canvas');
 const games = document.getElementById('games');
+
+// canvas css
+canvas.style.backgroundColor = 'antiquewhite';
+
+document.body.style.backgroundColor = 'darkslategrey'
 
 const START = document.getElementById('start');
 const PAUSE = document.getElementById('pause');
@@ -10,18 +15,24 @@ let counter = 0;
 let gamesCounter   = 0;
 let pristine = true;
 
+
+let initialSpeed = 100;
+
 // each square will have format '0-24'
 
 let SQUARES = new Map();
 let CURRENT_DIRECTION = 'r';
 let CURRENT_SEED = null;
 let INITIAL_POSITION = [
-    '1-1',
-    '1-2',
-    '1-3',
-    '1-4',
-    '1-5'
+    '10-1',
+    '10-2',
+    '10-3',
+    '10-4',
+    '10-5'
 ];
+
+let currentSeedColor;
+let currentColor = 'black';
 
 let currentPosition = [];
 let interval;
@@ -65,11 +76,14 @@ function seedBlock() {
         if (currentPosition.indexOf(CURRENT_SEED) < 0) {
             break;
         }
+
         if (attempts > 5000) {
             break;
         }
     }
-    SQUARES.get(CURRENT_SEED).style.background = 'black';
+
+    currentSeedColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+    SQUARES.get(CURRENT_SEED).style.background = currentSeedColor;
 }
 
 // function initButtonsListeners() {
@@ -144,7 +158,7 @@ function initKeyListeners() {
 }
 
 function startInterval() {
-    interval =  setInterval(() => updateSnakePosition(), 100);
+    interval =  setInterval(() => updateSnakePosition(), initialSpeed);
 }
 
 function setInitialPosition() {
@@ -159,8 +173,13 @@ function updateSnakePosition() {
     let head = currentPosition[currentPosition.length - 1];
 
     if (head === CURRENT_SEED) {
+        currentColor = currentSeedColor;
         currentPosition.push(tail);
         COUNTER_REF.innerText = 'Count: ' + ++counter + ' /';
+        initialSpeed--;
+
+        clearInterval(interval);
+        startInterval();
         seedBlock();
     }
 
@@ -206,7 +225,8 @@ function updateSnakePosition() {
 
 function updateHeadAndPosition(head, tail) {
     currentPosition.shift();
-    SQUARES.get(head).style.background = 'black';
+    // SQUARES.get(head).style.background = 'black';
+    SQUARES.get(head).style.background = currentColor;
     SQUARES.get(tail).style.background = 'initial';
     currentPosition.push(head);
 }
@@ -218,6 +238,7 @@ function gameOver() {
     START.innerText = 'Restart';
     PAUSE.style.display = 'none';
     pristine = false;
+    initialSpeed = 100;
 }
 
 function drawCanvas() {
